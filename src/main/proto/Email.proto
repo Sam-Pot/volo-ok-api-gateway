@@ -1,0 +1,17 @@
+syntax = "proto3";
+package emailManager;
+
+service EmailService {
+  rpc sendEmail(EmailDto) returns (EmailResponse) {};
+}
+
+message EmailDto {
+  string to = 1;
+  string subject = 2;
+  string text = 3;
+  string html = 4;
+}
+
+message EmailResponse{
+  bool sent = 1;
+}

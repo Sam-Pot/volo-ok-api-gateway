@@ -1,0 +1,17 @@
+syntax = "proto3";
+package paymentManager;
+
+service PaymentService {
+  rpc pay(BillingInformations) returns (PaymentResponse) {};
+}
+
+message BillingInformations {
+  string cardHolderName = 1;
+  string cardHolderSurname = 2;
+  uint32 expiryMonth = 3;
+  uint32 expiryYear = 4;
+  uint32 cvv = 5;
+  string PAN = 6;
+}
+
+message PaymentResponse { bool response = 1; }

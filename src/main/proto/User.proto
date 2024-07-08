@@ -1,0 +1,49 @@
+syntax = "proto3";
+package userManager;
+
+service UserService {
+  rpc saveOrUpdate(User) returns (User) {};
+  rpc find(PaginateQuery) returns (PaginatedUsers) {};
+  rpc findOne(EmailAddress) returns (User) {};
+  rpc clearData(UserId) returns (User) {};
+  rpc addPoints(PointsData) returns (PointsResponse) {};
+  rpc usePoints(PointsData) returns (PointsResponse) {};
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string surname = 3;
+  string birthDate = 4;
+  string customerCode = 5;
+  Role role = 6;
+  int32 residualPoints = 7;
+  int32 pointsUsed = 8;
+  string email = 9;
+  string saltedPassword = 10;
+  uint64 lastPurchaseDate = 11;
+}
+
+enum Role {
+  ADMIN = 0;
+  CUSTOMER = 1;
+  LOYALTY_CUSTOMER = 2;
+}
+
+message EmailAddress { string email = 1; }
+
+message UserId { string id = 1; }
+
+message PointsData {
+  string userId = 1;
+  int32 points = 2;
+}
+
+message PointsResponse { uint32 points = 1; }
+
+message PaginateQuery { string query = 1; }
+
+message PaginatedUsers {
+  int32 elementsNumber = 1;
+  repeated User users = 2;
+}

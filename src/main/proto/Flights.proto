@@ -1,0 +1,127 @@
+syntax = "proto3";
+package flightsManager;
+
+// PROMOTION
+service PromotionService {
+  rpc saveOrUpdate(Promotion) returns (Promotion) {}
+  rpc delete (PromotionId) returns (Promotion) {}
+  rpc find(PaginateQuery) returns (PaginatedPromotions) {};
+  rpc findOne(PromotionId) returns (Promotion) {};
+}
+
+message Promotion {
+  string id = 1;
+  string name = 2;
+  uint64 startDate = 3;
+  uint64 endDate = 4;
+  float discountPercentage = 5;
+}
+
+message PromotionId { string id = 1; }
+
+message PaginateQuery { string query = 1; };
+
+message PaginatedPromotions {
+  uint32 elementsNumber = 1;
+  repeated Promotion promotions = 2;
+}
+// FARE
+service FareService {
+  rpc saveOrUpdate(Fare) returns (Fare) {}
+  rpc delete (FareId) returns (Fare) {}
+  rpc find(PaginateQuery) returns (PaginatedFares) {};
+  rpc findOne(FareId) returns (Fare) {};
+}
+
+message Fare {
+  string id = 1;
+  string name = 2;
+  float price = 3;
+  bool editable = 4;
+  float modificatioPrice = 5;
+}
+
+message FareId { string id = 1; }
+
+message PaginatedFares {
+  uint32 elementsNumber = 1;
+  repeated Fare fares = 2;
+}
+
+// FLIGHTS
+
+service FlightService {
+  rpc saveOrUpdate(Flight) returns (Flight) {};
+  rpc delete (FlightId) returns (Flight) {};
+  rpc find(PaginateQuery) returns (PaginatedFlights) {};
+  rpc findOne(FlightId) returns (Flight) {};
+}
+
+message Flight {
+  string id = 1;
+  string name = 2;
+  uint64 startDateTime = 3;
+  uint64 endDateTime = 4;
+  uint64 distance = 5;
+  Frequency frequencyType = 6;
+  uint32 frequency = 7;
+  Airport departure = 8;
+  Airport destination = 9;
+  Promotion promotion = 10;
+  repeated Fare fares = 11;
+}
+
+enum Frequency {
+  HOURLY = 0;
+  DAILY = 1;
+  WEEKLY = 2;
+  MONTHLY = 3;
+}
+
+message FlightId { string id = 1; }
+
+message PaginatedFlights {
+  uint32 elementsNumber = 1;
+  repeated Flight flights = 2;
+}
+
+// AIRPORTS
+
+service AirportService {
+  rpc findByMunicipality(Municipality) returns (Airports) {};
+}
+
+message Municipality { string name = 1; }
+
+message Airports { repeated Airport airports = 1; }
+
+message Airport {
+  string id = 1;
+  string name = 2;
+  string municipality = 3;
+  string municipalityCode = 4;
+  string nationalCode = 5;
+}
+
+// BAGGAGE
+
+service BaggageService {
+  rpc saveOrUpdate(Baggage) returns (Baggage) {};
+  rpc delete (BaggageId) returns (Baggage) {};
+  rpc find(PaginateQuery) returns (PaginatedBaggages) {};
+  rpc findOne(BaggageId) returns (Baggage) {};
+}
+
+message Baggage {
+  string id = 1;
+  string name = 2;
+  float maxWeight = 3;
+  float cost = 4;
+}
+
+message BaggageId { string id = 1; }
+
+message PaginatedBaggages {
+  uint32 elementsNumber = 1;
+  repeated Baggage baggages = 2;
+}
