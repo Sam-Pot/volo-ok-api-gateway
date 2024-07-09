@@ -5,7 +5,7 @@ service UserService {
   rpc saveOrUpdate(User) returns (User) {};
   rpc find(PaginateQuery) returns (PaginatedUsers) {};
   rpc findOne(EmailAddress) returns (User) {};
-  rpc clearData(UserId) returns (User) {};
+  rpc clearData(EmailAddress) returns (User) {};
   rpc addPoints(PointsData) returns (PointsResponse) {};
   rpc usePoints(PointsData) returns (PointsResponse) {};
 }
@@ -31,8 +31,6 @@ enum Role {
 }
 
 message EmailAddress { string email = 1; }
-
-message UserId { string id = 1; }
 
 message PointsData {
   string userId = 1;
