@@ -31,12 +31,12 @@ public class JwtService {
 			if(!isAuthenticated) {
 				throw new JWTVerificationException("INVALID CREDENTIALS");
 			}
-			User user = this.userService.findOne(emailAddress);
+			User user = this.userService.findOneByEmail(emailAddress);
 			String role = user.getRole().toString();
 			//GENERA IL TOKEN
 			Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET);
 			return JWT.create()
-					.withSubject(emailAddress)
+					.withSubject(user.getId())
 					.withClaim(ROLE_CLAIM_KEY, role)
 					.withExpiresAt(LocalDateTime.now().plusHours(JWT_LIFETIME).toInstant(OffsetDateTime.now().getOffset()))
 					.sign(algorithm);

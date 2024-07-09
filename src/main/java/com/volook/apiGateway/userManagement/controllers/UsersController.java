@@ -31,9 +31,9 @@ public class UsersController {
 		return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 	}
 	
-	@GetMapping("/{email}")
-	public ResponseEntity<User> findOne(@PathVariable("email") String email){
-		User user = this.userService.findOne(email);
+	@GetMapping("/{id}")
+	public ResponseEntity<User> findOne(@PathVariable("id") String userId){
+		User user = this.userService.findOne(userId);
 		if(user!=null) {
 			return ResponseEntity.ok(user);
 		}
@@ -49,9 +49,9 @@ public class UsersController {
 		return new ResponseEntity<PaginatedUsers>(HttpStatus.BAD_REQUEST);
 	}
 	
-	@DeleteMapping("/{email}")
-	public ResponseEntity<User> delete(@PathVariable("email") String email){
-		User user = this.userService.delete(email);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<User> delete(@PathVariable("id") String userId){
+		User user = this.userService.delete(userId);
 		if(user!=null) {
 			return ResponseEntity.ok(user);
 		}

@@ -29,10 +29,10 @@ public class JwtValidator extends OncePerRequestFilter {
     	String token = request.getHeader("Authorization");
     	if (token != null) {
     		token = token.replace("Bearer ", "");
-    		String emailAddress = tokenService.validateToken(token);
+    		String userId = tokenService.validateToken(token);
     		String role = tokenService.validateClaim(token);
     		Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-    		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(emailAddress, null, authorities);
+    		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
         	SecurityContextHolder.getContext().setAuthentication(authentication);
     	}
     	filterChain.doFilter(request, response);

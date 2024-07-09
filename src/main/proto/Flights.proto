@@ -38,7 +38,7 @@ message Fare {
   string name = 2;
   float price = 3;
   bool editable = 4;
-  float modificatioPrice = 5;
+  float modificationPrice = 5;
 }
 
 message FareId { string id = 1; }
@@ -87,13 +87,13 @@ message PaginatedFlights {
 
 // AIRPORTS
 
-service AirportService {
+/*service AirportService {
   rpc findByMunicipality(Municipality) returns (Airports) {};
-}
+}*/
 
-message Municipality { string name = 1; }
+//message Municipality { string name = 1; }
 
-message Airports { repeated Airport airports = 1; }
+//message Airports { repeated Airport airports = 1; }
 
 message Airport {
   string id = 1;
@@ -105,7 +105,7 @@ message Airport {
 
 // BAGGAGE
 
-service BaggageService {
+/*service BaggageService {
   rpc saveOrUpdate(Baggage) returns (Baggage) {};
   rpc delete (BaggageId) returns (Baggage) {};
   rpc find(PaginateQuery) returns (PaginatedBaggages) {};
@@ -124,4 +124,4 @@ message BaggageId { string id = 1; }
 message PaginatedBaggages {
   uint32 elementsNumber = 1;
   repeated Baggage baggages = 2;
-}
+}*/

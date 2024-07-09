@@ -4,8 +4,9 @@ package userManager;
 service UserService {
   rpc saveOrUpdate(User) returns (User) {};
   rpc find(PaginateQuery) returns (PaginatedUsers) {};
-  rpc findOne(EmailAddress) returns (User) {};
-  rpc clearData(EmailAddress) returns (User) {};
+  rpc findOne(UserId) returns (User) {};
+  rpc findOneByEmail(EmailAddress) returns (User) {};
+  rpc clearData(UserId) returns (User) {};
   rpc addPoints(PointsData) returns (PointsResponse) {};
   rpc usePoints(PointsData) returns (PointsResponse) {};
 }
@@ -30,7 +31,9 @@ enum Role {
   LOYALTY_CUSTOMER = 2;
 }
 
-message EmailAddress { string email = 1; }
+message UserId { string id = 1; }
+
+message EmailAddress { string emailAddress = 2; }
 
 message PointsData {
   string userId = 1;

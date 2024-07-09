@@ -12,6 +12,7 @@ message BillingInformations {
   uint32 expiryYear = 4;
   uint32 cvv = 5;
   string PAN = 6;
+  float cost = 7;
 }
 
 message PaymentResponse { bool response = 1; }

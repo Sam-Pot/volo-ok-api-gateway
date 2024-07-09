@@ -10,6 +10,7 @@ import userManager.UserOuterClass.EmailAddress;
 import userManager.UserOuterClass.PaginateQuery;
 import userManager.UserOuterClass.PaginatedUsers;
 import userManager.UserOuterClass.User;
+import userManager.UserOuterClass.UserId;
 import userManager.UserServiceGrpc.UserServiceBlockingStub;
 
 @Service
@@ -17,14 +18,28 @@ public class UserService {
 	@GrpcClient(Microservice.USER_MANAGER)
 	private UserServiceBlockingStub userServiceStub;
 	
-	public User findOne(String emailAddress) {
+	public User findOneByEmail(String emailAddress) {
 		if(emailAddress==null) {
 			return null;
 		}
 		EmailAddress userEmailReq = EmailAddress.newBuilder()
-				.setEmail(emailAddress)
+				.setEmailAddress(emailAddress)
 		        .build();
-		User user = this.userServiceStub.findOne(userEmailReq);
+		User user = this.userServiceStub.findOneByEmail(userEmailReq);
+		user = User.newBuilder(user)
+				.setSaltedPassword(null)
+				.build();
+		return user;
+	}
+	
+	public User findOne(String userId) {
+		if(userId==null) {
+			return null;
+		}
+		UserId userIdReq = UserId.newBuilder()
+				.setId(userId)
+		        .build();
+		User user = this.userServiceStub.findOne(userIdReq);
 		user = User.newBuilder(user)
 				.setSaltedPassword(null)
 				.build();
@@ -35,7 +50,10 @@ public class UserService {
 		if(emailAddress==null || password==null) {
 			return false;
 		}
-		User user = this.findOne(emailAddress);
+		User user = this.findOneByEmail(emailAddress);
+		if(user==null) {
+			return false;
+		}
 		if(BCrypt.checkpw(password,user.getSaltedPassword())){
 			return true;
 		}
@@ -59,19 +77,18 @@ public class UserService {
 		return savedUser;
 	}
 	
-	public User delete(String email) {
-		/*if(email==null) {
+	public User delete(String userId) {
+		if(userId==null) {
 			return null;
 		}
-		EmailAddress emailAddress = EmailAddress.newBuilder()
-				.setEmail(email)
+		UserId id = UserId.newBuilder()
+				.setId(userId)
 				.build();
-		User userToDelete = this.userServiceStub.clearData(emailAddress);
+		User userToDelete = this.userServiceStub.clearData(id);
 		userToDelete = User.newBuilder(userToDelete)
 				.setSaltedPassword(null)
 				.build();
-		return userToDelete;	*/
-		return null;
+		return userToDelete;
 	}
 	
 	public PaginatedUsers find(String query){

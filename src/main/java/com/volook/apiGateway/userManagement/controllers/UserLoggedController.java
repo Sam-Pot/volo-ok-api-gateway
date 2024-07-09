@@ -55,8 +55,8 @@ public class UserLoggedController {
 	@PutMapping()
 	public ResponseEntity<User> update(@RequestBody User user) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loggedUserEmail = (String) auth.getPrincipal();
-		if(!loggedUserEmail.equals(user.getEmail())) {
+		String loggedUserId = (String) auth.getPrincipal();
+		if(!loggedUserId.equals(user.getId())) {
 			return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
 		}
 		User updatedUser = this.userService.saveOrUpdate(user);
@@ -66,28 +66,28 @@ public class UserLoggedController {
 		return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 	}
 	
-	@GetMapping("/{email}")
-	public ResponseEntity<User> findOne(@PathVariable("email") String email){
+	@GetMapping("/{id}")
+	public ResponseEntity<User> findOne(@PathVariable("id") String userId){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loggedUserEmail = (String) auth.getPrincipal();
-		if(!loggedUserEmail.equals(email)) {
+		String loggedUserId = (String) auth.getPrincipal();
+		if(!loggedUserId.equals(userId)) {
 			return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
 		}
-		User user = this.userService.findOne(email);
+		User user = this.userService.findOne(userId);
 		if(user!=null) {
 			return ResponseEntity.ok(user);
 		}
 		return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 	}
 	
-	@DeleteMapping("/{email}")
-	public ResponseEntity<User> delete(@PathVariable("email") String email){
+	@DeleteMapping("/{id}")
+	public ResponseEntity<User> delete(@PathVariable("id") String id){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loggedUserEmail = (String) auth.getPrincipal();
-		if(!loggedUserEmail.equals(email)) {
+		String loggedUserId = (String) auth.getPrincipal();
+		if(!loggedUserId.equals(id)) {
 			return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
 		}
-		User user = this.userService.delete(email);
+		User user = this.userService.delete(id);
 		if(user!=null) {
 			return ResponseEntity.ok(user);
 		}
@@ -97,8 +97,8 @@ public class UserLoggedController {
 	@PutMapping("/loyaltyProgram")
 	public ResponseEntity<User> joinLoyaltyProgram(@RequestBody User user) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loggedUserEmail = (String) auth.getPrincipal();
-		if(!loggedUserEmail.equals(user.getEmail())) {
+		String loggedUserId = (String) auth.getPrincipal();
+		if(!loggedUserId.equals(user.getId())) {
 			return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
 		}
 		User updatedUser = this.userService.saveOrUpdate(user);

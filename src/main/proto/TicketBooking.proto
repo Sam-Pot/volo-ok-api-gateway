@@ -3,16 +3,17 @@ package ticketBookingManager;
 
 service BookingService {
   rpc saveOrUpdate(Booking) returns (Booking) {};
-  rpc delete (BookingId) returns (Booking) {};
+  rpc delete (BookingDto) returns (Booking) {};
   rpc find(PaginateQuery) returns (PaginatedBookings) {};
-  rpc findOne(BookingId) returns (Booking) {};
-  rpc getStatistics(UserId) returns (PaginatedFidelityStatistics) {};
+  rpc findOne(BookingDto) returns (Booking) {};
 }
 
 service TicketService {
-  rpc save(Ticket) returns (Ticket) {};
-  rpc update(Ticket) returns (Ticket) {};
+  rpc saveOrUpdate(Ticket) returns (Ticket) {};
   rpc generateTicket(TicketId) returns (EmailDto) {};
+  rpc findOne(TicketDto) returns (Ticket) {};
+  rpc find(PaginateQuery) returns (PaginatedTickets) {};
+  rpc getStatistics(UserId) returns (PaginatedFidelityStatistics) {};
 }
 
 message Booking {
@@ -41,21 +42,34 @@ message Ticket {
   uint32 usedPoints = 12;
 }
 
-message TicketId { string id = 1; }
-
 enum BookingState {
   OPEN = 0;
   CONFIRMED = 1;
   EXPIRED = 2;
 }
 
-message BookingId { string id = 1; };
+message BookingDto {
+  string bookingId = 1;
+  string userId = 2;
+}
 
-message PaginateQuery { string query = 1; };
+message TicketId { string id = 1; }
+
+message TicketDto {
+  string ticketId = 1;
+  string userId = 2;
+}
+
+message PaginateQuery { string query = 1; }
 
 message PaginatedBookings {
   uint32 elementsNumber = 1;
   repeated Booking bookings = 2;
+}
+
+message PaginatedTickets {
+  uint32 elementsNumber = 1;
+  repeated Ticket tickets = 2;
 }
 
 message UserId { string id = 1; }
