@@ -4,44 +4,45 @@ package flightsManager;
 // PROMOTION
 service PromotionService {
   rpc saveOrUpdate(Promotion) returns (Promotion) {}
-  rpc delete (PromotionId) returns (Promotion) {}
-  rpc find(PaginateQuery) returns (PaginatedPromotions) {};
-  rpc findOne(PromotionId) returns (Promotion) {};
+  rpc delete (IdDto) returns (Promotion) {}
+  rpc findAll(QueryDto) returns (PaginatedPromotions) {};
+  rpc findOne(IdDto) returns (Promotion) {};
+  rpc getLoyaltyCustomerPromotions(QueryDto) returns (PaginatedPromotions){};
 }
+
+message IdDto { string id = 1; }
+
+message QueryDto { string query = 1; };
 
 message Promotion {
-  string id = 1;
-  string name = 2;
-  uint64 startDate = 3;
-  uint64 endDate = 4;
-  float discountPercentage = 5;
+  string id = 1;                 // microservice
+  string name = 2;               // admin
+  uint64 startDate = 3;          // admin
+  uint64 endDate = 4;            // admin
+  float discountPercentage = 5;  // admin
+  bool onlyForLoyalCustomer = 6; // admin
 }
-
-message PromotionId { string id = 1; }
-
-message PaginateQuery { string query = 1; };
 
 message PaginatedPromotions {
   uint32 elementsNumber = 1;
   repeated Promotion promotions = 2;
 }
+
 // FARE
 service FareService {
   rpc saveOrUpdate(Fare) returns (Fare) {}
-  rpc delete (FareId) returns (Fare) {}
-  rpc find(PaginateQuery) returns (PaginatedFares) {};
-  rpc findOne(FareId) returns (Fare) {};
+  rpc delete (IdDto) returns (Fare) {}
+  rpc findAll(QueryDto) returns (PaginatedFares) {};
+  rpc findOne(IdDto) returns (Fare) {};
 }
 
 message Fare {
-  string id = 1;
-  string name = 2;
-  float price = 3;
-  bool editable = 4;
-  float modificationPrice = 5;
+  string id = 1;               // microservice
+  string name = 2;             // admin
+  float price = 3;             // admin
+  bool editable = 4;           // admin
+  float modificationPrice = 5; // admin
 }
-
-message FareId { string id = 1; }
 
 message PaginatedFares {
   uint32 elementsNumber = 1;
@@ -51,34 +52,33 @@ message PaginatedFares {
 // FLIGHTS
 
 service FlightService {
-  rpc saveOrUpdate(Flight) returns (Flight) {};
-  rpc delete (FlightId) returns (Flight) {};
-  rpc find(PaginateQuery) returns (PaginatedFlights) {};
-  rpc findOne(FlightId) returns (Flight) {};
+  rpc saveOrUpdate(FlightDto) returns (Flight) {};
+  rpc delete (IdDto) returns (Flight) {};
+  rpc find(QueryDto) returns (PaginatedFlights) {};
+  rpc findOne(IdDto) returns (Flight) {};
+  rpc generateFlights(SearchFlightsDto) returns (AvailableFlights){};
 }
 
 message Flight {
-  string id = 1;
-  string name = 2;
-  uint64 startDateTime = 3;
-  uint64 endDateTime = 4;
-  uint64 distance = 5;
-  Frequency frequencyType = 6;
-  uint32 frequency = 7;
-  Airport departure = 8;
-  Airport destination = 9;
-  Promotion promotion = 10;
-  repeated Fare fares = 11;
+  string id = 1;               // microservice
+  string name = 2;             // admin
+  uint64 startDateTime = 3;    // admin
+  uint64 endDateTime = 4;      // admin
+  float distance = 5;          // microservice
+  Frequency frequencyType = 6; // admin
+  uint32 frequency = 7;        // admin
+  Airport departure = 8;       // admin
+  Airport destination = 9;     // admin
+  Promotion promotion = 10;    // admin
+  repeated Fare fares = 11;    // admin
+  uint32 seats = 12;
 }
-
 enum Frequency {
   HOURLY = 0;
   DAILY = 1;
   WEEKLY = 2;
   MONTHLY = 3;
 }
-
-message FlightId { string id = 1; }
 
 message PaginatedFlights {
   uint32 elementsNumber = 1;
@@ -91,9 +91,13 @@ message PaginatedFlights {
   rpc findByMunicipality(Municipality) returns (Airports) {};
 }*/
 
-//message Municipality { string name = 1; }
+// message Municipality { string name = 1; }
 
-//message Airports { repeated Airport airports = 1; }
+// message Airports { repeated Airport airports = 1; }
+
+service AirportService{
+  rpc findAll(IdDto) returns (PaginatedAirports){};
+}
 
 message Airport {
   string id = 1;
@@ -103,25 +107,33 @@ message Airport {
   string nationalCode = 5;
 }
 
-// BAGGAGE
-
-/*service BaggageService {
-  rpc saveOrUpdate(Baggage) returns (Baggage) {};
-  rpc delete (BaggageId) returns (Baggage) {};
-  rpc find(PaginateQuery) returns (PaginatedBaggages) {};
-  rpc findOne(BaggageId) returns (Baggage) {};
-}
-
-message Baggage {
-  string id = 1;
-  string name = 2;
-  float maxWeight = 3;
-  float cost = 4;
-}
-
-message BaggageId { string id = 1; }
-
-message PaginatedBaggages {
+message PaginatedAirports {
   uint32 elementsNumber = 1;
-  repeated Baggage baggages = 2;
-}*/
+  repeated Airport airports = 2;
+}
+
+message SearchFlightsDto{
+  string departureAirportId = 1;
+  string destinationAirportId = 2;
+  uint64 departureDate = 3;
+  Fare fare = 4;
+}
+
+message AvailableFlights{
+  repeated Flight availableFlight = 1;
+}
+
+message FlightDto{
+  string id = 1;               // microservice
+  string name = 2;             // admin
+  uint64 startDateTime = 3;    // admin
+  uint64 endDateTime = 4;      // admin
+  float distance = 5;          // microservice
+  Frequency frequencyType = 6; // admin
+  uint32 frequency = 7;        // admin
+  string departure = 8;       // admin
+  string destination = 9;     // admin
+  string promotion = 10;    // admin
+  repeated string fares = 11;    // admin
+  uint32 seats = 12;
+}

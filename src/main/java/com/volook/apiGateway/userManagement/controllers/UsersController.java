@@ -1,5 +1,7 @@
 package com.volook.apiGateway.userManagement.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +43,11 @@ public class UsersController {
 	}
 	
 	@GetMapping()
-	public ResponseEntity<PaginatedUsers> find(@RequestParam String query){
+	public ResponseEntity<PaginatedUsers> find(@RequestParam Map<String,String> mapQuery){
+		String query = "";
+		for(String s: mapQuery.keySet()) {
+			query+=s+"="+mapQuery.get(s);
+		}
 		PaginatedUsers users = this.userService.find(query);
 		if(users!=null) {
 			return ResponseEntity.ok(users);

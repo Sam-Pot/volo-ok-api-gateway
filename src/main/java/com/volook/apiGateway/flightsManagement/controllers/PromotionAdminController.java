@@ -35,8 +35,8 @@ public class PromotionAdminController {
 	}
 	
 	@GetMapping()
-	public ResponseEntity<PaginatedPromotions> find(@RequestParam String query){
-		PaginatedPromotions promotions = this.promotionService.find(query);
+	public ResponseEntity<PaginatedPromotions> find(){
+		PaginatedPromotions promotions = this.promotionService.find();
 		if(promotions!=null) {
 			return ResponseEntity.ok(promotions);
 		}

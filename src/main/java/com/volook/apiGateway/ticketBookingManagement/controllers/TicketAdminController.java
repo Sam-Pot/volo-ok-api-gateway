@@ -24,7 +24,7 @@ public class TicketAdminController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Ticket> findOne(@PathVariable("id") String ticketId){		
-		Ticket ticket = this.ticketService.findOne(ticketId,null);
+		Ticket ticket = this.ticketService.findOne(ticketId,null,null);
 		if(ticket!=null) {
 			return ResponseEntity.ok(ticket);
 		}

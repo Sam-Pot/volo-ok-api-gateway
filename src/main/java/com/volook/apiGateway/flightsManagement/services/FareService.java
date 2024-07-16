@@ -6,9 +6,9 @@ import com.volook.apiGateway.Microservice;
 
 import flightsManager.FareServiceGrpc.FareServiceBlockingStub;
 import flightsManager.Flights.Fare;
-import flightsManager.Flights.FareId;
-import flightsManager.Flights.PaginateQuery;
+import flightsManager.Flights.IdDto;
 import flightsManager.Flights.PaginatedFares;
+import flightsManager.Flights.QueryDto;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 
 @Service
@@ -29,21 +29,18 @@ public class FareService {
 		if(fareId==null) {
 			return null;
 		}
-		FareId id = FareId.newBuilder()
+		IdDto id = IdDto.newBuilder()
 				.setId(fareId)
 				.build();
 		Fare deletedFare = this.fareServiceStub.delete(id);
 		return deletedFare;
 	}
 	
-	public PaginatedFares find(String query) {
-		if(query==null) {
-			return null;
-		}
-		PaginateQuery paginateQuery = PaginateQuery.newBuilder()
-				.setQuery(query)
+	public PaginatedFares find() {
+		QueryDto paginateQuery = QueryDto.newBuilder()
+				.setQuery("a")
 				.build();
-		PaginatedFares fares = this.fareServiceStub.find(paginateQuery);
+		PaginatedFares fares = this.fareServiceStub.findAll(paginateQuery);
 		return fares;
 	}
 	
@@ -51,7 +48,7 @@ public class FareService {
 		if(fareId==null) {
 			return null;
 		}
-		FareId id = FareId.newBuilder()
+		IdDto id = IdDto.newBuilder()
 				.setId(fareId)
 				.build();
 		Fare fare = this.fareServiceStub.findOne(id);

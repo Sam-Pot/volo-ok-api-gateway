@@ -18,7 +18,7 @@ import flightsManager.Flights.Fare;
 import flightsManager.Flights.PaginatedFares;
 
 @RestController
-@RequestMapping("/admin/fares")
+@RequestMapping("fares")
 public class FareAdminController {
 	
 	@Autowired
@@ -34,8 +34,8 @@ public class FareAdminController {
 	}
 	
 	@GetMapping()
-	public ResponseEntity<PaginatedFares> find(@RequestParam String query){
-		PaginatedFares fares = this.fareService.find(query);
+	public ResponseEntity<PaginatedFares> find(){
+		PaginatedFares fares = this.fareService.find();
 		if(fares!=null) {
 			return ResponseEntity.ok(fares);
 		}

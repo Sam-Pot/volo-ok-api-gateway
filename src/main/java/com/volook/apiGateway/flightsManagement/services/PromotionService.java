@@ -1,13 +1,16 @@
 package com.volook.apiGateway.flightsManagement.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.volook.apiGateway.Microservice;
 
-import flightsManager.Flights.PaginateQuery;
+import flightsManager.Flights.IdDto;
 import flightsManager.Flights.PaginatedPromotions;
 import flightsManager.Flights.Promotion;
-import flightsManager.Flights.PromotionId;
+import flightsManager.Flights.QueryDto;
 import flightsManager.PromotionServiceGrpc.PromotionServiceBlockingStub;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 
@@ -29,7 +32,7 @@ public class PromotionService {
 		if(promotionId==null) {
 			return null;
 		}
-		PromotionId id = PromotionId.newBuilder()
+		IdDto id = IdDto.newBuilder()
 				.setId(promotionId)
 				.build();
 		Promotion deletedPromotion = this.promotionServiceStub.delete(id);
@@ -40,22 +43,29 @@ public class PromotionService {
 		if(promotionId==null) {
 			return null;
 		}
-		PromotionId id = PromotionId.newBuilder()
+		IdDto id = IdDto.newBuilder()
 				.setId(promotionId)
 				.build();
 		Promotion promotion = this.promotionServiceStub.findOne(id);
 		return promotion;
 	}
 	
-	public PaginatedPromotions find(String query) {
-		if(query==null) {
-			return null;
-		}
-		PaginateQuery paginateQuery = PaginateQuery.newBuilder()
-				.setQuery(query)
+	public PaginatedPromotions find() {
+		QueryDto paginateQuery = QueryDto.newBuilder()
+				.setQuery("a")
 				.build();
-		PaginatedPromotions promotions = this.promotionServiceStub.find(paginateQuery);
+		PaginatedPromotions promotions = this.promotionServiceStub.findAll(paginateQuery);
 		return promotions;
+	}
+	
+	public List<Promotion> getLoyaltyCustomerPromotions(){
+		List<Promotion> promotions = new ArrayList<>();
+		QueryDto mockQuery = QueryDto.newBuilder().build();
+		PaginatedPromotions response = this.promotionServiceStub.getLoyaltyCustomerPromotions(mockQuery);
+		for(Promotion p: response.getPromotionsList()) {
+			promotions.add(p);
+		}
+		return null;
 	}
 	
 }

@@ -4,48 +4,54 @@ package ticketBookingManager;
 service BookingService {
   rpc saveOrUpdate(Booking) returns (Booking) {};
   rpc delete (BookingDto) returns (Booking) {};
-  rpc find(PaginateQuery) returns (PaginatedBookings) {};
+  rpc find(PaginateQueryDto) returns (PaginatedBookings) {};
   rpc findOne(BookingDto) returns (Booking) {};
 }
 
 service TicketService {
   rpc saveOrUpdate(Ticket) returns (Ticket) {};
-  rpc generateTicket(TicketId) returns (EmailDto) {};
+  rpc generateTicket(TicketDto) returns (EmailDto) {};
   rpc findOne(TicketDto) returns (Ticket) {};
-  rpc find(PaginateQuery) returns (PaginatedTickets) {};
-  rpc getStatistics(UserId) returns (PaginatedFidelityStatistics) {};
+  rpc find(PaginateQueryDto) returns (PaginatedTickets) {};
+  rpc delete (TicketDto) returns (Ticket) {};
+  rpc countTickets(CountDto) returns (TicketsNumber) {};
 }
 
 message Booking {
-  string id = 1;
-  bool isOneWayTrip = 2;
-  BookingState state = 3;
-  uint64 expirationDate = 4;
-  string flightId = 5;
-  string userId = 6;
-  float price = 7;
-  repeated Ticket tickets = 8;
+  string id = 1;               // ticket booking microservice
+  BookingState state = 2;      // ticket booking microservice
+  uint64 expirationDate = 3;   // ticket booking microservice
+  string userId = 4;           // user
+  repeated Ticket tickets = 5; // user
 }
 
 message Ticket {
-  string id = 1;
-  string passengerName = 2;
-  string passengerSurname = 3;
-  string baggageCategory = 4;
-  string seat = 5;
-  string fareId = 6;
-  string from = 7;
-  string to = 8;
-  string customerCode = 9;
-  float price = 10;
-  uint32 generatedPoints = 11;
-  uint32 usedPoints = 12;
+  string id = 1;               // user
+  string passengerName = 2;    // user
+  string passengerSurname = 3; // user
+  string fareId = 4;           // user
+  string customerCode = 5;     // user
+  float price = 6;             // api gateway
+  uint32 generatedPoints = 7;  // api gateway
+  uint32 usedPoints = 8;       // user
+  string flightId = 9;         // user
+  TicketState state = 10;      // api gateway
+  uint64 flightDate = 11;      // user
+  string bookingId = 12;       // booking microservice
+  string userId = 13;          // user
+  string from = 14;            // user
+  string to = 15;              // user
 }
 
 enum BookingState {
-  OPEN = 0;
-  CONFIRMED = 1;
-  EXPIRED = 2;
+  OPEN = 0;      // microservice
+  CONFIRMED = 1; // api-gateway
+  EXPIRED = 2;   // api-gateway scheduler
+}
+
+enum TicketState {
+  BOOKED = 0;    // microservice
+  PURCHASED = 1; // api-gateway
 }
 
 message BookingDto {
@@ -53,14 +59,13 @@ message BookingDto {
   string userId = 2;
 }
 
-message TicketId { string id = 1; }
-
 message TicketDto {
   string ticketId = 1;
   string userId = 2;
+  string userEmail = 3;
 }
 
-message PaginateQuery { string query = 1; }
+message PaginateQueryDto { string query = 1; }
 
 message PaginatedBookings {
   uint32 elementsNumber = 1;
@@ -72,25 +77,18 @@ message PaginatedTickets {
   repeated Ticket tickets = 2;
 }
 
-message UserId { string id = 1; }
-
-message FidelityStatistics {
-  string ticketId = 1;
-  uint64 date = 2;
-  string from = 3;
-  string to = 4;
-  uint32 generatedPoints = 5;
-  uint32 usedPoints = 6;
-}
-
-message PaginatedFidelityStatistics {
-  uint32 elementsNumber = 1;
-  repeated FidelityStatistics statistics = 2;
-}
-
 message EmailDto {
   string to = 1;
   string subject = 2;
   string text = 3;
   string html = 4;
+}
+
+message CountDto{
+  string flightId = 1;
+  uint64 departureDate = 2;
+}
+
+message TicketsNumber{
+  uint32 numberOfTickets = 1;
 }

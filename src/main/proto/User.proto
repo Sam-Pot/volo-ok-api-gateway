@@ -3,26 +3,28 @@ package userManager;
 
 service UserService {
   rpc saveOrUpdate(User) returns (User) {};
-  rpc find(PaginateQuery) returns (PaginatedUsers) {};
+  rpc find(PaginateQueryDto) returns (PaginatedUsers) {};
   rpc findOne(UserId) returns (User) {};
   rpc findOneByEmail(EmailAddress) returns (User) {};
   rpc clearData(UserId) returns (User) {};
   rpc addPoints(PointsData) returns (PointsResponse) {};
   rpc usePoints(PointsData) returns (PointsResponse) {};
+  rpc setLastPurchaseDate(LastPurchaseDto) returns (DateUpdated) {};
+  rpc checkLoyalty(Years) returns (EmailList) {};
 }
 
 message User {
-  string id = 1;
-  string name = 2;
-  string surname = 3;
-  string birthDate = 4;
-  string customerCode = 5;
+  string id = 1;           // microservice
+  string name = 2;         // user
+  string surname = 3;      // user
+  string birthDate = 4;    // user
+  string customerCode = 5; // microservice
   Role role = 6;
-  int32 residualPoints = 7;
-  int32 pointsUsed = 8;
-  string email = 9;
-  string saltedPassword = 10;
-  uint64 lastPurchaseDate = 11;
+  int32 residualPoints = 7;     // api-gateway
+  int32 pointsUsed = 8;         // user
+  string email = 9;             // user
+  string saltedPassword = 10;   // apigateway
+  uint64 lastPurchaseDate = 11; // apigateway
 }
 
 enum Role {
@@ -31,6 +33,13 @@ enum Role {
   LOYALTY_CUSTOMER = 2;
 }
 
+message LastPurchaseDto {
+  uint64 date = 1;
+  string userId = 2;
+}
+
+message DateUpdated { bool updated = 1; }
+
 message UserId { string id = 1; }
 
 message EmailAddress { string emailAddress = 2; }
@@ -38,11 +47,25 @@ message EmailAddress { string emailAddress = 2; }
 message PointsData {
   string userId = 1;
   int32 points = 2;
+  string customerCode = 3;
 }
+
+message Years {
+  uint32 year = 1;
+}
+
+message EmailDto {
+  string to = 1;
+  string subject = 2;
+  string text = 3;
+  string html = 4;
+}
+
+message EmailList { repeated EmailDto emailList = 1; }
 
 message PointsResponse { uint32 points = 1; }
 
-message PaginateQuery { string query = 1; }
+message PaginateQueryDto { string query = 1; }
 
 message PaginatedUsers {
   int32 elementsNumber = 1;

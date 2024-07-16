@@ -22,7 +22,7 @@ public class JwtValidator extends OncePerRequestFilter {
 	
 	@Autowired
 	private JwtService tokenService;
-
+		
     @Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
     	throws ServletException, IOException {
@@ -37,4 +37,5 @@ public class JwtValidator extends OncePerRequestFilter {
     	}
     	filterChain.doFilter(request, response);
     }
+    
 }

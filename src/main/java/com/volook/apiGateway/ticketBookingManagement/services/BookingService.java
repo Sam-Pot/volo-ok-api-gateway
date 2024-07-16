@@ -9,7 +9,7 @@ import ticketBookingManager.BookingServiceGrpc.BookingServiceBlockingStub;
 import ticketBookingManager.TicketBooking.Booking;
 import ticketBookingManager.TicketBooking.BookingDto;
 import ticketBookingManager.TicketBooking.PaginatedBookings;
-import ticketBookingManager.TicketBooking.PaginateQuery;
+import ticketBookingManager.TicketBooking.PaginateQueryDto;
 
 @Service
 public class BookingService {
@@ -33,7 +33,7 @@ public class BookingService {
 		if(query==null) {
 			return null;
 		}
-		PaginateQuery paginateQuery = PaginateQuery.newBuilder()
+		PaginateQueryDto paginateQuery = PaginateQueryDto.newBuilder()
 				.setQuery(query)
 				.build();
 		PaginatedBookings bookings = this.bookingService.find(paginateQuery);

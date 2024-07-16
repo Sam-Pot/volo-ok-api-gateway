@@ -1,5 +1,7 @@
 package com.volook.apiGateway.ticketBookingManagement.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import com.volook.apiGateway.ticketBookingManagement.services.BookingService;
 import ticketBookingManager.TicketBooking.Booking;
 import ticketBookingManager.TicketBooking.BookingDto;
 import ticketBookingManager.TicketBooking.PaginatedBookings;
+import ticketBookingManager.TicketBooking.Ticket;
 
 @RestController
 @RequestMapping("bookings")
@@ -38,10 +41,10 @@ public class BookingController {
 	}
 	
 	@GetMapping()
-	public ResponseEntity<PaginatedBookings> find(@RequestParam String query){
+	public ResponseEntity<PaginatedBookings> find(){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loggedUserId = (String) auth.getPrincipal();
-		query += "&userId="+loggedUserId;
+		String query = "userId="+loggedUserId;
 		PaginatedBookings bookings = this.bookingService.find(query);
 		if(bookings!=null) {
 			return ResponseEntity.ok(bookings);
@@ -67,8 +70,13 @@ public class BookingController {
 	public ResponseEntity<Booking> save(@RequestBody Booking booking) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loggedUserId = (String) auth.getPrincipal();
+		List<Ticket> tickets = booking.getTicketsList();
+		//Assuming tickets refers all to the same departure date
+		//long expirationDate =tickets.get(0).getFlightDate() - (3*24*60*60*1000); //3 days before the flight
 		Booking bookingToSave = Booking.newBuilder(booking)
 				.setUserId(loggedUserId)
+				.addAllTickets(tickets)
+				//.setExpirationDate(expirationDate)
 				.build();
 		Booking savedBooking = this.bookingService.saveOrUpdate(bookingToSave);
 		if(savedBooking!=null) {
