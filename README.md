@@ -18,39 +18,9 @@ For each grpc microservice the api-gateway have to communicate with, it's necess
 2. map the previous parameters in the application.properties as follow:
     * grpc.client.generic-client-name.address=${GRPC_GENERIC_CLIENT_ADDRESS}
     * grpc.client.generic-client-name.negotiation-type=${GRPC_GENERIC_CLIENT_NEGOTIATION_TYPE}
-    
-3. Add the microservice .proto file in /src/main/proto
 
 ####Stub generation
 
 1. Launch the Maven clean command.
 2. Launch the Maven install command.
-
-
-###Grpc communications
-
-1. Inject the generated grpc stubs in the services. Replace "GenericService" with the name of your .proto service.
-
-```java
-@GrpcClient("generic-client-name")
-private GenericServiceBlockingStub genericServiceStub;
-
-```
-2. Call a remote service with grpc.
-Replace "Param..." with the params of the request dto.
-
-```java
-public GenericResponse genericService() {
-	GenericRequest request = GenericRequest.newBuilder()
-		.setParam1(<param1>)
-		.setParam2(<param2")
-		.build();
-		
-	GenericResponse response = this.genericServiceStub.genericService(request);
-		return response;
-	}
-
-```
-
-
-
+3. Build the project as a war and use an Apache Tomcat for the deploy.
