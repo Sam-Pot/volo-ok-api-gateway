@@ -10,6 +10,7 @@ import flightsManager.Flights.Fare;
 import flightsManager.Flights.Flight;
 import flightsManager.Flights.IdDto;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import ticketBookingManager.TicketBooking;
 import ticketBookingManager.TicketBooking.EmailDto;
 import ticketBookingManager.TicketBooking.PaginateQueryDto;
 import ticketBookingManager.TicketBooking.PaginatedTickets;
@@ -51,6 +52,15 @@ public class TicketService {
 				.setQuery(query)
 				.build();
 		PaginatedTickets tickets = this.ticketServiceStub.find(paginateQuery);
+		return tickets;
+	}
+	
+	public PaginatedTickets findAllByUser(String userId) {
+		if(userId==null) {
+			return null;
+		}
+		ticketBookingManager.TicketBooking.IdDto idDto = ticketBookingManager.TicketBooking.IdDto.newBuilder().setId(userId).build();
+		PaginatedTickets tickets = this.ticketServiceStub.findAllByUser(idDto);
 		return tickets;
 	}
 	

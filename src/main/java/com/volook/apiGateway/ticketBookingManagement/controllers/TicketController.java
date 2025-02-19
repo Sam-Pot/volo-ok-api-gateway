@@ -58,12 +58,23 @@ public class TicketController {
 		return new ResponseEntity<Ticket>(HttpStatus.BAD_REQUEST);
 	}
 	
-	@GetMapping()
+	/*@GetMapping()
 	public ResponseEntity<PaginatedTickets> find(){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loggedUserId = (String) auth.getPrincipal();
 		String query = "userId="+loggedUserId;
 		PaginatedTickets tickets = this.ticketService.find(query);
+		if(tickets!=null) {
+			return ResponseEntity.ok(tickets);
+		}
+		return new ResponseEntity<PaginatedTickets>(HttpStatus.BAD_REQUEST);
+	}*/
+	
+	@GetMapping()
+	public ResponseEntity<PaginatedTickets> findAllByUser(){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String loggedUserId = (String) auth.getPrincipal();
+		PaginatedTickets tickets = this.ticketService.findAllByUser(loggedUserId);
 		if(tickets!=null) {
 			return ResponseEntity.ok(tickets);
 		}
@@ -161,10 +172,11 @@ public class TicketController {
 		try {
 			//FILL TICKET PARAMETERS
 			Ticket ticketToBuy = Ticket.newBuilder()
+					.setId(buyTicketDto.ticket().id()!=null?buyTicketDto.ticket().id():"")
 					.setPassengerName( buyTicketDto.ticket().passengerName())
 					.setPassengerSurname( buyTicketDto.ticket().passengerSurname())
 					.setFareId( buyTicketDto.ticket().fareId())
-					.setCustomerCode( buyTicketDto.ticket().customerCode())
+					.setCustomerCode( buyTicketDto.ticket().customerCode()!=null?buyTicketDto.ticket().customerCode():"")
 					.setPrice( buyTicketDto.ticket().price())
 					.setGeneratedPoints( buyTicketDto.ticket().generatedPoints())
 					.setUsedPoints( buyTicketDto.ticket().usedPoints())

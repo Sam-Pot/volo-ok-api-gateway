@@ -97,14 +97,15 @@ message PaginatedFlights {
 
 service AirportService{
   rpc findAll(IdDto) returns (PaginatedAirports){};
+  rpc findOne(IdDto) returns (Airport) {};
 }
 
 message Airport {
   string id = 1;
   string name = 2;
-  string municipality = 3;
-  string municipalityCode = 4;
-  string nationalCode = 5;
+  string iata = 3;
+  double latitude = 4;
+  double longitude = 5;
 }
 
 message PaginatedAirports {

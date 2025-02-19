@@ -1,5 +1,6 @@
 package com.volook.apiGateway.flightsManagement.utils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class GenerateFlight implements Callable<List<AvailableFlight>> {
 			throw new IllegalArgumentException();
 		}
 		this.flight = flight;
-		this.selectedDate = selectedDate;
+		this.selectedDate = setToMidnight(selectedDate);
 		this.ticketServiceBlockingStub = ticketServiceBlockingStub;
 		this.dayAfterSelectedDate = selectedDate + DAILY_FACTOR;
 	}
@@ -44,12 +45,13 @@ public class GenerateFlight implements Callable<List<AvailableFlight>> {
 	@Override
 	public LinkedList<AvailableFlight> call() throws Exception {
 		LinkedList<AvailableFlight> availableFlights = new LinkedList<>();
-		long curDate = flight.getStartDateTime();
+		long curDate = flight.getStartDateTime();//setToMidnight(selectedDate);
+		
 		while (curDate <= flight.getEndDateTime() && curDate<dayAfterSelectedDate) {
-			long offset = timeFactor[flight.getFrequencyType().ordinal()];
+			long offset = timeFactor[flight.getFrequencyType().ordinal()]*flight.getFrequency();
 			long nextDepartureDate = curDate + offset;
 			nextDepartureDate = (new Date(nextDepartureDate)).getTime();
-			if(nextDepartureDate>=selectedDate && nextDepartureDate<dayAfterSelectedDate) {
+			if(selectedDate<dayAfterSelectedDate && selectedDate<=curDate) {
 				CountDto countDto = CountDto.newBuilder()
 						.setDepartureDate(nextDepartureDate)
 						.setFlightId(flight.getId())
@@ -66,9 +68,9 @@ public class GenerateFlight implements Callable<List<AvailableFlight>> {
 					AirportDto departure = new AirportDto(
 							flight.getDeparture().getId().toString(),
 							flight.getDeparture().getName(),
-							flight.getDeparture().getMunicipality(),
-							flight.getDeparture().getMunicipalityCode(),
-							flight.getDeparture().getNationalCode()
+							flight.getDeparture().getIata(),
+							flight.getDeparture().getLatitude(),
+							flight.getDeparture().getLongitude()
 							);
 					
 					
@@ -82,9 +84,9 @@ public class GenerateFlight implements Callable<List<AvailableFlight>> {
 					AirportDto destination = new AirportDto(
 							flight.getDestination().getId().toString(),
 							flight.getDestination().getName(),
-							flight.getDestination().getMunicipality(),
-							flight.getDestination().getMunicipalityCode(),
-							flight.getDestination().getNationalCode()
+							flight.getDestination().getIata(),
+							flight.getDestination().getLatitude(),
+							flight.getDestination().getLongitude()
 							);
 					
 					/*Promotion promotion = Promotion.newBuilder()
@@ -136,10 +138,21 @@ public class GenerateFlight implements Callable<List<AvailableFlight>> {
 					curDate = nextDepartureDate;
 				}
 			}else {
-				break;
+				curDate = nextDepartureDate;
 			}
 		}
 		return availableFlights;
+	}
+	
+	private long setToMidnight(long milliseconds) {
+        Date date = new Date(milliseconds);
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
 	}
 
 }

@@ -1,5 +1,8 @@
 package com.volook.apiGateway.ticketBookingManagement.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.volook.apiGateway.Microservice;
@@ -9,6 +12,10 @@ import ticketBookingManager.BookingServiceGrpc.BookingServiceBlockingStub;
 import ticketBookingManager.TicketBooking.Booking;
 import ticketBookingManager.TicketBooking.BookingDto;
 import ticketBookingManager.TicketBooking.PaginatedBookings;
+import ticketBookingManager.TicketBooking.Ticket;
+import userManager.UserOuterClass.User;
+import userManager.UserOuterClass.UserId;
+import userManager.UserServiceGrpc.UserServiceBlockingStub;
 import ticketBookingManager.TicketBooking.PaginateQueryDto;
 
 @Service
@@ -16,6 +23,8 @@ public class BookingService {
 	
 	@GrpcClient(Microservice.TICKET_BOOKING_MANAGER)
 	private BookingServiceBlockingStub bookingService;
+	@GrpcClient(Microservice.USER_MANAGER)
+	private UserServiceBlockingStub userService;
 	
 	public Booking findOne(String bookingId, String userId) {
 		if(bookingId==null) {
@@ -44,7 +53,20 @@ public class BookingService {
 		if(booking==null) {
 			return null;
 		}
-		Booking savedBooking = this.bookingService.saveOrUpdate(booking);
+		UserId userId = UserId.newBuilder().setId(booking.getUserId()).build();
+		User user = this.userService.findOne(userId);
+		Booking bookingToSave = booking;
+		System.out.println(user.getCustomerCode());
+		if(user.getCustomerCode()!=null && !user.getCustomerCode().isEmpty()) {
+			List<Ticket> tickets = booking.getTicketsList();
+			List<Ticket> ticketsToSave = new ArrayList<Ticket>();
+			for(Ticket t: tickets) {
+				Ticket curTicket = Ticket.newBuilder(t).setCustomerCode(user.getCustomerCode()).build();
+				ticketsToSave.add(curTicket);
+			}
+			bookingToSave = Booking.newBuilder(booking).clearTickets().addAllTickets(ticketsToSave).build();
+		}
+		Booking savedBooking = this.bookingService.saveOrUpdate(bookingToSave);
 		return savedBooking;
 	}
 	

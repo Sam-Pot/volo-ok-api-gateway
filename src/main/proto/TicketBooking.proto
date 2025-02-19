@@ -12,6 +12,7 @@ service TicketService {
   rpc saveOrUpdate(Ticket) returns (Ticket) {};
   rpc generateTicket(TicketDto) returns (EmailDto) {};
   rpc findOne(TicketDto) returns (Ticket) {};
+  rpc findAllByUser(IdDto) returns (PaginatedTickets) {};
   rpc find(PaginateQueryDto) returns (PaginatedTickets) {};
   rpc delete (TicketDto) returns (Ticket) {};
   rpc countTickets(CountDto) returns (TicketsNumber) {};
@@ -44,14 +45,16 @@ message Ticket {
 }
 
 enum BookingState {
-  OPEN = 0;      // microservice
-  CONFIRMED = 1; // api-gateway
-  EXPIRED = 2;   // api-gateway scheduler
+  EMPTY = 0;
+  OPEN = 1;      // microservice
+  CONFIRMED = 2; // api-gateway
+  EXPIRED = 3;   // api-gateway scheduler
 }
 
 enum TicketState {
-  BOOKED = 0;    // microservice
-  PURCHASED = 1; // api-gateway
+  VOID = 0;
+  BOOKED = 1;    // microservice
+  PURCHASED = 2; // api-gateway
 }
 
 message BookingDto {
@@ -92,3 +95,5 @@ message CountDto{
 message TicketsNumber{
   uint32 numberOfTickets = 1;
 }
+
+message IdDto {string id = 1;}
